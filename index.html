@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce & Admin System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* --- Global Styles --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --gray-light: #f3f4f6;
+            --gray-dark: #6b7280;
+            --bg: #f8f8f8;
+            --text: #000;
+            --card-bg: #fff;
+        }
+        [data-theme="dark"] {
+            --bg: #181818;
+            --text: #f8f8f8;
+            --card-bg: #242424;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease; /* Added transition for theme toggle */
+        }
+
+        /* --- Landing Page Styles --- */
+        #landing-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            background-color: #f3f4f6; /* Match body background */
+        }
+        .choice-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .choice-container h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 30px;
+        }
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .choice-buttons button {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .choice-buttons button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .shopper-btn {
+            background-color: #22c55e; /* Green for shopper */
+            color: white;
+        }
+        .shopper-btn:hover {
+            background-color: #16a34a;
+        }
+        .admin-btn {
+            background-color: #4f46e5; /* Indigo for admin */
+            color: white;
+        }
+        .admin-btn:hover {
+            background-color: #4338ca;
+        }
+
+        /* --- Auth/E-commerce Section Styles --- */
+        #auth-ecommerce-section {
+            display: none; /* Hidden by default */
+            width: 100%;
+            max-width: 1200px; /* Max width for e-commerce content */
+            margin: 0 auto; /* Center the e-commerce content */
+            flex-direction: column; /* Ensure header, tabs, products stack */
+            min-height: 100vh; /* Take full height */
+        }
+        #auth-container {
+            width: 100%;
+            max-width: 480px; /* Max width for auth form */
+            margin: auto; /* Center the auth container */
+        }
+        .form-container {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .toggle-form {
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .toggle-form:hover {
+            color: var(--primary-dark);
+        }
+        .error-message, .success-message {
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .error-message.show, .success-message.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        #ecommerce-content header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #ecommerce-content header h1 {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        #ecommerce-content header h1:hover {
+            color: var(--primary);
+        }
+        .cart-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cart-box button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .cart-box button:hover {
+            background-color: #45a049;
+        }
+        .theme-toggle {
+            margin-left: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .theme-toggle:hover {
+            color: var(--primary);
+        }
+        .logout-btn {
+            background-color: #ef4444;
+            padding: 8px 12px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #dc2626;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            justify-content: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: scale(1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: slideInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+        .card p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .card button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .card button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tabs button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #e0e0e0;
+            color: #555;
+            font-weight: 500;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .tabs button.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .tabs button:hover:not(.active) {
+            background: #d0d0d0;
+        }
+        #checkoutPage {
+            display: none;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        .cart-list {
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item-controls button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .cart-item-controls button:hover {
+            background: #0056b3;
+        }
+        .cart-item button.remove {
+            background: #ef4444;
+        }
+        .cart-item button.remove:hover {
+            background: #dc2626;
+        }
+        .subtotal {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 20px 0;
+            text-align: right;
+        }
+        #checkoutPage > button {
+            background: #6b7280;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        #checkoutPage > button:hover {
+            background: #4b5563;
+        }
+        #addressPage {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+            animation: slideInRight 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        #addressPage h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        #addressPage label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        #addressPage input[type="text"],
+        #addressPage textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #addressPage input[type="text"]:focus,
+        #addressPage textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        #addressPage button {
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #addressPage button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        #paymentPage {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #f9f9f9;
+            animation: slideInRight 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        #paymentPage h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+        #paymentPage button {
+            background: #25D366;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        #paymentPage button:hover {
+            background: #1DA851;
+            transform: translateY(-2px);
+        }
+        #auth-ecommerce-section footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+            width: 100%;
+            max-width: 1200px;
+        }
+        #auth-ecommerce-section footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        #auth-ecommerce-section footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* --- Admin Panel Styles --- */
+        #admin-panel-section {
+            display: none; /* Hidden by default */
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .admin-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        #admin-panel-section header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #admin-panel-section nav {
+            background-color: #e0e7ff;
+            padding: 10px 20px;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 20px;
+        }
+        #admin-panel-section nav a {
+            color: #4f46e5;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #admin-panel-section nav a:hover {
+            background-color: #c7d2fe;
+        }
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e7ff;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #4f46e5;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .btn-success {
+            background-color: #22c55e;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .message.success {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+        .message.error {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        #admin-login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e0e7ff;
+            width: 100%; /* Ensure it takes full width when active */
+        }
+        #admin-login-form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        #admin-login-form h2 {
+            font-size: 2em;
+            color: #4f46e5;
+            margin-bottom: 30px;
+        }
+        #admin-login-form .form-group {
+            text-align: left;
+        }
+        #admin-login-form .btn-primary {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* --- Keyframe Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* --- Popup Message Styles --- */
+        #order-success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #dcfce7; /* Light green background */
+            color: #16a34a; /* Dark green text */
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+            font-size: 1.2em;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        #order-success-popup .tick-mark {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+            animation: tickBounce 0.5s ease-out;
+        }
+
+        @keyframes tickBounce {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- --- Landing Page Section --- -->
+    <div id="landing-page" class="w-full">
+        <div class="choice-container">
+            <h1>Welcome!</h1>
+            <p class="text-lg text-gray-700 mb-8">Please choose your role to proceed:</p>
+            <div class="choice-buttons">
+                <button class="shopper-btn" onclick="showShopperSection()">🛍️ I'm a Shopper</button>
+                <button class="admin-btn" onclick="showAdminSection()">⚙️ I'm an Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- --- Authentication & E-commerce Section --- -->
+    <div id="auth-ecommerce-section" class="flex flex-col">
+        <!-- Authentication Section -->
+        <div id="auth-container" class="w-full max-w-md mx-auto">
+            <!-- Hero Section -->
+            <div class="text-center mb-8">
+                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/06c0e3b5-2d0f-427e-939e-4656e8f91ab2.png" alt="Shield icon with a checkmark representing authentication security in blue and white colors" class="w-20 h-20 mx-auto mb-4 rounded-full shadow-md">
+                <h1 class="text-2xl font-bold text-gray-800 mb-1">Welcome to AuthSecure</h1>
+                <p class="text-gray-600">Secure authentication for your application</p>
+            </div>
+            
+            <!-- Form Container -->
+            <div class="bg-white rounded-lg form-container p-8">
+                <!-- Form Tabs -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button id="login-tab" class="tab-button py-2 px-4 font-medium text-gray-500 border-b-2 border-transparent">Login</button>
+                    <button id="signup-tab" class="tab-button py-2 px-4 font-medium text-gray-500 border-b-2 border-transparent">Sign Up</button>
+                </div>
+                
+                <!-- Error/Success Messages -->
+                <div id="error-message" class="error-message bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 hidden"></div>
+                <div id="success-message" class="success-message bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 hidden"></div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="login-email" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="your@email.com" required>
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="login-password" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="••••••••" required>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input id="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                        </div>
+                        <a href="#" class="text-sm text-indigo-600 hover:text-indigo-500" onclick="showForgotPasswordMessage(event)">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Sign in</button>
+                </form>
+                
+                <!-- Signup Form -->
+                <form id="signup-form" class="space-y-4 hidden">
+                    <div>
+                        <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="signup-name" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="John Doe" required>
+                    </div>
+                    <div>
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signup-email" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="your@email.com" required>
+                    </div>
+                    <div>
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signup-password" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="••••••••" required minlength="8">
+                        <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters</p>
+                    </div>
+                    <div>
+                        <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="signup-confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md input-field focus:outline-none focus:ring-1 focus:ring-indigo-500" placeholder="••••••••" required minlength="8">
+                    </div>
+                    <div class="flex items-center">
+                        <input id="terms" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" required>
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms & Conditions</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create Account</button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-500">Or continue with</p>
+                    
+                    <div class="mt-4 grid grid-cols-3 gap-3">
+                        <div>
+                            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/a8f05794-ac9f-4dd8-aa1f-ad7283a14515.png" alt="Google logo in brand colors" class="h-5 w-5">
+                            </a>
+                        </div>
+                        <div>
+                            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/8a175564-073e-481c-a468-8c0f121ad630.png" alt="Facebook logo in brand blue color" class="h-5 w-5">
+                            </a>
+                        </div>
+                        <div>
+                            <a href="#" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/26053f52-78d9-435d-b513-3e17ac44bff5.png" alt="Twitter logo in brand blue color" class="h-5 w-5">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- E-commerce Content -->
+        <div id="ecommerce-content" class="flex flex-col">
+            <header>
+                <h1 onclick="goBackToShopping()" class="text-2xl font-bold">🛍️ Shashi's E-Commerce</h1>
+                <div class="cart-box">
+                    <span class="theme-toggle" onclick="toggleTheme()">🌓 Switch Theme</span>
+                    <button onclick="goToCartPage()">🛒 Cart (<span id="cartCount">0</span>)</button>
+                    <button class="logout-btn" onclick="logoutUser()">Logout</button>
+                </div>
+            </header>
+
+            <div class="tabs" id="tabs">
+                <button class="tab-btn active" onclick="filterCategory('all')">All</button>
+                <button class="tab-btn" onclick="filterCategory('product')">Products</button>
+                <button class="tab-btn" onclick="filterCategory('ott')">OTT Subscriptions</button>
+            </div>
+
+            <div class="products" id="products"></div>
+
+            <div id="checkoutPage">
+                <div class="cart-list" id="cartList"></div>
+                <div class="subtotal" id="subtotal"></div>
+                <button onclick="goBackToShopping()">⬅️ Back to Shopping</button>
+
+                <div id="addressPage" class="mt-8 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <h2 class="text-xl font-semibold text-indigo-600 mb-4">Step 1: Enter Your Address</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="custName" class="block text-sm font-medium text-gray-700 mb-1">Name:</label>
+                            <input type="text" id="custName" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                        </div>
+                        <div>
+                            <label for="mobile" class="block text-sm font-medium text-gray-700 mb-1">Mobile:</label>
+                            <input type="text" id="mobile" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address:</label>
+                        <textarea id="address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"></textarea>
+                    </div>
+                    <div class="mt-4">
+                        <label for="zipcode" class="block text-sm font-medium text-gray-700 mb-1">Zip Code:</label>
+                        <input type="text" id="zipcode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                    </div>
+                    <button onclick="showPaymentPage()" class="mt-6 w-full md:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition ease-in-out duration-150">Next: Payment</button>
+                </div>
+
+                <div id="paymentPage" style="display:none;" class="mt-8 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <h2 class="text-xl font-semibold text-green-600 mb-4">Step 2: Proceed to Payment</h2>
+                    <button onclick="placeOrder()" class="w-full px-6 py-3 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition ease-in-out duration-150">Place Order</button>
+                </div>
+            </div>
+
+            <footer class="mt-auto">
+                <p>Shashi's Ecom copyrights 2025</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- --- Admin Panel Section --- -->
+    <div id="admin-panel-section" class="flex flex-col">
+        <!-- Admin Login Section -->
+        <div id="admin-login-container">
+            <form id="admin-login-form">
+                <h2>Admin Login</h2>
+                <div class="form-group">
+                    <label for="admin-username">Username:</label>
+                    <input type="text" id="admin-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password:</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <div id="admin-login-message" class="message error hidden"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+
+        <!-- Admin Dashboard Section (Hidden by default) -->
+        <div id="admin-dashboard-container" class="admin-container hidden">
+            <header>
+                <h1 class="text-2xl font-bold">Admin Panel</h1>
+                <button id="admin-logout-btn" class="btn btn-danger" onclick="adminLogout()">Logout</button>
+            </header>
+            <nav>
+                <a href="#" onclick="showAdminDashboardSection('products-management')">Product Management</a>
+                <a href="#" onclick="showAdminDashboardSection('users-management')">User Management</a>
+                <!-- Add more navigation links as needed -->
+            </nav>
+
+            <div id="products-management" class="dashboard-section">
+                <h2 class="section-title">Product Management</h2>
+                <div id="product-message" class="message hidden"></div>
+
+                <!-- Add/Edit Product Form -->
+                <form id="product-form" class="mb-8 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4" id="product-form-title">Add New Product</h3>
+                    <input type="hidden" id="product-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="product-name">Product Name:</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">Price:</label>
+                            <input type="number" id="product-price" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category:</label>
+                            <select id="product-category" required>
+                                <option value="">Select Category</option>
+                                <option value="product">Product</option>
+                                <option value="ott">OTT Subscription</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-img">Image URL:</label>
+                            <input type="text" id="product-img" placeholder="e.g., https://example.com/image.jpg">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4" id="product-form-submit-btn">Add Product</button>
+                    <button type="button" class="btn btn-secondary mt-4 ml-2 hidden" id="product-form-cancel-btn" onclick="resetProductForm()">Cancel Edit</button>
+                </form>
+
+                <!-- Product List -->
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">Existing Products</h3>
+                <table class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Category</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Products will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="users-management" class="dashboard-section hidden">
+                <h2 class="section-title">User Management</h2>
+                <div id="user-message" class="message hidden"></div>
+
+                <!-- Add/Edit User Form -->
+                <form id="user-form" class="mb-8 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4" id="user-form-title">Add New User</h3>
+                    <input type="hidden" id="user-email-hidden"> <!-- Use email as unique identifier -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="user-name">Full Name:</label>
+                            <input type="text" id="user-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email:</label>
+                            <input type="email" id="user-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-password">Password:</label>
+                            <input type="password" id="user-password" placeholder="Leave blank to keep current" minlength="8">
+                            <p class="text-xs text-gray-500 mt-1">Required for new users. Leave blank to keep current password when editing.</p>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4" id="user-form-submit-btn">Add User</button>
+                    <button type="button" class="btn btn-secondary mt-4 ml-2 hidden" id="user-form-cancel-btn" onclick="resetUserForm()">Cancel Edit</button>
+                </form>
+
+                <!-- User List -->
+                <h3 class="text-xl font-semibold text-gray-700 mb-4">Existing Users</h3>
+                <table class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Users will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Popup -->
+    <div id="order-success-popup">
+        <span class="tick-mark">✔️</span>
+        Order placed successfully!
+    </div>
+
+    <script>
+        // --- Global Section Management ---
+        function showSection(sectionId) {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('auth-ecommerce-section').style.display = 'none';
+            document.getElementById('admin-panel-section').style.display = 'none';
+
+            // Reset scroll to top when changing sections
+            window.scrollTo(0, 0);
+
+            // Apply display based on section needs
+            if (sectionId === 'landing-page') {
+                document.getElementById(sectionId).style.display = 'flex';
+            } else if (sectionId === 'auth-ecommerce-section') {
+                document.getElementById(sectionId).style.display = 'flex'; // Use flex for main content
+            } else if (sectionId === 'admin-panel-section') {
+                document.getElementById(sectionId).style.display = 'flex'; // Use flex for main content
+            }
+        }
+
+        function showShopperSection() {
+            showSection('auth-ecommerce-section');
+            initAuthEcommerce(); // Initialize shopper specific parts
+            // If already logged in, bypass auth form and show e-commerce content
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('ecommerce-content').style.display = 'flex';
+                renderProducts();
+                renderCheckout();
+            } else {
+                document.getElementById('auth-container').style.display = 'block';
+                document.getElementById('ecommerce-content').style.display = 'none';
+            }
+        }
+
+        function showAdminSection() {
+            showSection('admin-panel-section');
+            initAdminPanel(); // Initialize admin specific parts
+            // Always show the login container first when this button is clicked
+            document.getElementById('admin-login-container').style.display = 'flex'; 
+            document.getElementById('admin-dashboard-container').style.display = 'none';
+            document.getElementById('admin-login-message').classList.add('hidden'); // Clear any previous messages
+            document.getElementById('admin-login-form').reset(); // Clear form fields
+        }
+
+        function returnToLandingPage() {
+            showSection('landing-page');
+            // Clear any active states or messages
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+            document.getElementById('admin-login-message').classList.add('hidden');
+            // Reset forms if needed
+            document.getElementById('login-form').reset();
+            document.getElementById('signup-form').reset();
+            document.getElementById('admin-login-form').reset();
+        }
+
+        // --- Authentication & E-commerce Script Logic ---
+        const DB_NAME = 'authSystemDB';
+        // This array will be the single source of truth for products across shopper and admin views
+        let ecommerceItems = [
+            { id: 1, name: "Sneakers", price: 1999, category: "product", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/e0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 2, name: "Netflix 1 Month", price: 499, category: "ott", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/f0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 3, name: "Wrist Watch", price: 2999, category: "product", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/g0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 4, name: "Amazon Prime", price: 149, category: "ott", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/h0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 5, name: "T-Shirt", price: 699, category: "product", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/i0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 6, name: "Disney+ Hotstar", price: 299, category: "ott", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/j0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 7, name: "Headphones", price: 1499, category: "product", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/k0123456-789a-4bc5-d678-901234567890.png" },
+            { id: 8, name: "Sony Liv", price: 199, category: "ott", img: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/l0123456-789a-4bc5-d678-901234567890.png" }
+        ];
+
+        function initAuthEcommerce() {
+            initDB();
+            document.getElementById('login-tab').classList.add('border-indigo-500', 'text-indigo-600');
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            document.getElementById('login-tab').classList.add('border-indigo-500', 'text-indigo-600');
+            document.getElementById('signup-tab').classList.remove('border-indigo-500', 'text-indigo-600');
+        }
+        
+        function initDB() {
+            if (!localStorage.getItem(DB_NAME)) {
+                localStorage.setItem(DB_NAME, JSON.stringify({ users: [] }));
+            }
+        }
+        
+        function getUsers() {
+            const db = JSON.parse(localStorage.getItem(DB_NAME));
+            return db.users;
+        }
+        
+        function addUser(user) {
+            const db = JSON.parse(localStorage.getItem(DB_NAME));
+            db.users.push(user);
+            localStorage.setItem(DB_NAME, JSON.stringify(db));
+        }
+        
+        function findUserByEmail(email) {
+            const users = getUsers();
+            return users.find(user => user.email === email);
+        }
+        
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            errorEl.classList.add('show');
+            
+            setTimeout(() => {
+                errorEl.classList.remove('show');
+                setTimeout(() => {
+                    errorEl.classList.add('hidden');
+                }, 300);
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.classList.remove('hidden');
+            successEl.classList.add('show');
+            
+            setTimeout(() => {
+                successEl.classList.remove('show');
+                setTimeout(() => {
+                    successEl.classList.add('hidden');
+                }, 300);
+            }, 5000);
+        }
+        
+        function clearForm(formId) {
+            document.getElementById(formId).reset();
+        }
+
+        function showForgotPasswordMessage(event) {
+            event.preventDefault();
+            showError('Forgot password functionality requires a backend. This is a client-side demo.');
+        }
+        
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-form').classList.remove('hidden');
+            document.getElementById('signup-form').classList.add('hidden');
+            this.classList.add('border-indigo-500', 'text-indigo-600');
+            document.getElementById('signup-tab').classList.remove('border-indigo-500', 'text-indigo-600');
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+        });
+        
+        document.getElementById('signup-tab').addEventListener('click', function() {
+            document.getElementById('login-form').classList.add('hidden');
+            document.getElementById('signup-form').classList.remove('hidden');
+            this.classList.add('border-indigo-500', 'text-indigo-600');
+            document.getElementById('login-tab').classList.remove('border-indigo-500', 'text-indigo-600');
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+        });
+        
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            const user = findUserByEmail(email);
+            
+            if (!user) {
+                showError('User not found. Please sign up.');
+                return;
+            }
+            
+            if (user.password !== password) {
+                showError('Incorrect password');
+                return;
+            }
+            
+            showSuccess('Login successful! Redirecting to e-commerce...');
+            clearForm('login-form');
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loggedInUserEmail', email);
+
+            setTimeout(() => {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('ecommerce-content').style.display = 'flex';
+                renderProducts();
+                renderCheckout();
+            }, 1500);
+        });
+        
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            if (findUserByEmail(email)) {
+                showError('User already exists. Please login.');
+                return;
+            }
+            
+            const newUser = {
+                name,
+                email,
+                password
+            };
+            
+            addUser(newUser);
+            showSuccess('Account created successfully! Redirecting to e-commerce...');
+            clearForm('signup-form');
+            
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('loggedInUserEmail', email);
+
+            setTimeout(() => {
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('ecommerce-content').style.display = 'flex';
+                renderProducts();
+                renderCheckout();
+            }, 1500);
+        });
+
+        function logoutUser() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('loggedInUserEmail');
+            cart.length = 0; 
+            renderCheckout();
+
+            document.getElementById('ecommerce-content').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'block';
+            document.getElementById('login-tab').click();
+            showSuccess('You have been logged out.');
+            returnToLandingPage();
+        }
+        
+        let currentCategory = 'all';
+        const cart = [];
+
+        const renderProducts = () => {
+            const container = document.getElementById("products");
+            container.innerHTML = "";
+            ecommerceItems.filter(i => currentCategory === 'all' || i.category === currentCategory).forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="card" style="animation-delay: ${index * 0.1}s;">
+                        <img src="${item.img}" alt="${item.name}" />
+                        <h3>${item.name}</h3>
+                        <p>₹${item.price}</p>
+                        <button onclick="addToCart(${item.id})">Add to Cart</button>
+                    </div>
+                `;
+            });
+        };
+
+        const filterCategory = (cat) => {
+            currentCategory = cat;
+            document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+            const clickedButton = Array.from(document.querySelectorAll(".tab-btn")).find(btn => btn.getAttribute('onclick').includes(`'${cat}'`));
+            if (clickedButton) {
+                clickedButton.classList.add("active");
+            }
+            renderProducts();
+        };
+
+        const toggleTheme = () => {
+            document.body.dataset.theme = document.body.dataset.theme === "dark" ? "light" : "dark";
+        };
+
+        const renderCartList = () => {
+            const list = document.getElementById("cartList");
+            list.innerHTML = '<h2>Your Cart</h2>';
+            if (cart.length === 0) {
+                list.innerHTML += '<p>Cart is empty.</p>';
+                document.getElementById("subtotal").textContent = "";
+                return;
+            }
+            cart.forEach((item, index) => {
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name} - ₹${item.price} x ${item.qty}</span>
+                        <div class="cart-item-controls">
+                            <button onclick="changeQty(${index}, -1)">-</button>
+                            <button onclick="changeQty(${index}, 1)">+</button>
+                            <button class="remove" onclick="removeFromCart(${index})">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+            document.getElementById("subtotal").textContent = `Subtotal: ₹${total}`;
+        };
+
+        const goToCartPage = () => {
+            document.getElementById("products").style.display = "none";
+            document.getElementById("tabs").style.display = "none";
+            document.getElementById("checkoutPage").style.display = "block";
+            
+            document.getElementById("addressPage").style.display = "block";
+            document.getElementById("paymentPage").style.display = "none";
+
+            renderCartList();
+            // No need to renderCheckout here as it's called by input listeners
+        };
+
+        const goBackToShopping = () => {
+            document.getElementById("checkoutPage").style.display = "none";
+            document.getElementById("products").style.display = "grid";
+            document.getElementById("tabs").style.display = "flex";
+            renderProducts();
+        };
+
+        const showPaymentPage = () => {
+            document.getElementById("addressPage").style.display = "none";
+            document.getElementById("paymentPage").style.display = "block";
+            // No need to renderCheckout here as it's called by input listeners
+        };
+
+        // This function is no longer needed for WhatsApp link, but can be repurposed if needed
+        const renderCheckout = () => {
+            const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+            document.getElementById("cartCount").textContent = cart.reduce((c, i) => c + i.qty, 0);
+            document.getElementById("subtotal").textContent = `Subtotal: ₹${total}`;
+        };
+
+        const addToCart = (id) => {
+            const item = ecommerceItems.find(i => i.id === id);
+            const existing = cart.find(i => i.id === id);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+            renderCheckout();
+        };
+
+        const changeQty = (index, delta) => {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            renderCartList();
+            renderCheckout();
+        };
+
+        const removeFromCart = (index) => {
+            cart.splice(index, 1);
+            renderCartList();
+            renderCheckout();
+        };
+
+        // Event listeners for address fields to update cart count/subtotal if needed
+        document.getElementById("custName").addEventListener("input", renderCheckout);
+        document.getElementById("mobile").addEventListener("input", renderCheckout);
+        document.getElementById("address").addEventListener("input", renderCheckout);
+        document.getElementById("zipcode").addEventListener("input", renderCheckout);
+
+        // --- Order Placement and Popup ---
+        function placeOrder() {
+            // Here you would typically send the order details to a backend server
+            // For this demo, we'll just show the success message.
+
+            const popup = document.getElementById('order-success-popup');
+            popup.style.display = 'block'; // Show the popup
+
+            // Hide the popup after 3 seconds
+            setTimeout(() => {
+                popup.style.display = 'none';
+                // Optionally, clear the cart and go back to shopping after order is placed
+                cart.length = 0;
+                renderCheckout();
+                goBackToShopping();
+            }, 3000); 
+        }
+
+
+        // --- Admin Panel Script Logic ---
+        // Admin Login Credentials (FOR DEMONSTRATION ONLY - NOT SECURE FOR PRODUCTION)
+        const ADMIN_USERNAME = 'admin'; 
+        const ADMIN_PASSWORD = 'password'; 
+
+        function initAdminPanel() {
+            // This function is called when the admin section is first shown.
+            // It determines whether to show the login form or the dashboard.
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                document.getElementById('admin-login-container').style.display = 'none';
+                document.getElementById('admin-dashboard-container').style.display = 'block';
+                showAdminDashboardSection('products-management'); // Default section to show
+            } else {
+                document.getElementById('admin-login-container').style.display = 'flex'; 
+                document.getElementById('admin-dashboard-container').style.display = 'none';
+            }
+            resetProductForm();
+            fetchProductsAdmin();
+            resetUserForm(); 
+            fetchUsersAdmin(); 
+        }
+
+        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            const loginMessage = document.getElementById('admin-login-message');
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                loginMessage.classList.add('hidden');
+                document.getElementById('admin-login-container').style.display = 'none';
+                document.getElementById('admin-dashboard-container').style.display = 'block';
+                showAdminDashboardSection('products-management'); // Show products by default
+            } else {
+                loginMessage.textContent = 'Invalid username or password.';
+                loginMessage.classList.remove('hidden');
+            }
+        });
+
+        function adminLogout() {
+            localStorage.removeItem('adminLoggedIn'); // Clear admin login status
+            document.getElementById('admin-dashboard-container').style.display = 'none';
+            document.getElementById('admin-login-container').style.display = 'flex'; // Show login form again
+            document.getElementById('admin-username').value = '';
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-login-message').classList.add('hidden');
+            returnToLandingPage(); // Go back to the main landing page
+        }
+
+        function showAdminDashboardSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            if (sectionId === 'products-management') {
+                fetchProductsAdmin();
+            } else if (sectionId === 'users-management') {
+                fetchUsersAdmin();
+            }
+        }
+
+        function showAdminMessage(type, message, sectionId) {
+            const messageEl = document.getElementById(`${sectionId.split('-')[0]}-message`);
+            messageEl.classList.remove('hidden', 'success', 'error');
+            messageEl.classList.add(type);
+            messageEl.textContent = message;
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Placeholder API URLs - REPLACE WITH YOUR ACTUAL API ENDPOINTS
+        const API_BASE_URL = 'https://your-backend-api.com';
+        const PRODUCTS_API_URL = `${API_BASE_URL}/products`;
+        const USERS_API_URL = `${API_BASE_URL}/users`;
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('adminAuthToken');
+            return {
+                'Content-Type': 'application/json',
+                // 'Authorization': `Bearer ${token}`
+            };
+        }
+
+        async function fetchProductsAdmin() {
+            const productsTableBody = document.getElementById('products-table-body');
+            productsTableBody.innerHTML = '<tr><td colspan="6" class="text-center">Loading products...</td></tr>';
+            try {
+                const products = ecommerceItems; 
+
+                productsTableBody.innerHTML = '';
+                if (products.length === 0) {
+                    productsTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No products found.</td></tr>';
+                    return;
+                }
+                products.forEach(product => {
+                    const row = productsTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>₹${product.price.toFixed(2)}</td>
+                        <td>${product.category}</td>
+                        <td><img src="${product.img}" alt="${product.name}" class="w-16 h-16 object-cover rounded"></td>
+                        <td class="action-buttons">
+                            <button class="btn btn-primary" onclick="editProductAdmin(${product.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteProductAdmin(${product.id})">Delete</button>
+                        </td>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                productsTableBody.innerHTML = '<tr><td colspan="6" class="text-center text-red-500">Failed to load products.</td></tr>';
+                showAdminMessage('error', 'Failed to load products.', 'products-management');
+            }
+        }
+
+        document.getElementById('product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const productId = document.getElementById('product-id').value;
+            const productName = document.getElementById('product-name').value;
+            const productPrice = parseFloat(document.getElementById('product-price').value);
+            const productCategory = document.getElementById('product-category').value;
+            const productImg = document.getElementById('product-img').value;
+
+            const productData = {
+                name: productName,
+                price: productPrice,
+                category: productCategory,
+                img: productImg
+            };
+
+            try {
+                if (productId) {
+                    // UPDATE operation
+                    console.log('Updating product:', productId, productData);
+                    const index = ecommerceItems.findIndex(item => item.id == productId);
+                    if (index !== -1) {
+                        ecommerceItems[index] = { ...ecommerceItems[index], ...productData, id: parseInt(productId) };
+                        showAdminMessage('success', `Product "${productName}" updated successfully! (Demo)`, 'products-management');
+                    } else {
+                        showAdminMessage('error', `Product with ID ${productId} not found for update.`, 'products-management');
+                    }
+                } else {
+                    // CREATE operation
+                    console.log('Adding new product:', productData);
+                    const newId = ecommerceItems.length > 0 ? Math.max(...ecommerceItems.map(item => item.id)) + 1 : 1;
+                    ecommerceItems.push({ id: newId, ...productData });
+                    showAdminMessage('success', `Product "${productName}" added successfully! (Demo)`, 'products-management');
+                }
+                
+                resetProductForm();
+                fetchProductsAdmin();
+                renderProducts();
+            } catch (error) {
+                console.error('Error saving product:', error);
+                showAdminMessage('error', `Failed to save product: ${error.message}`, 'products-management');
+            }
+        });
+
+        function editProductAdmin(id) {
+            const productToEdit = ecommerceItems.find(item => item.id === id);
+            if (productToEdit) {
+                document.getElementById('product-id').value = productToEdit.id;
+                document.getElementById('product-name').value = productToEdit.name;
+                document.getElementById('product-price').value = productToEdit.price;
+                document.getElementById('product-category').value = productToEdit.category;
+                document.getElementById('product-img').value = productToEdit.img;
+
+                document.getElementById('product-form-title').textContent = `Edit Product (ID: ${productToEdit.id})`;
+                document.getElementById('product-form-submit-btn').textContent = 'Update Product';
+                document.getElementById('product-form-cancel-btn').classList.remove('hidden');
+            } else {
+                showAdminMessage('error', 'Product not found for editing.', 'products-management');
+            }
+        }
+
+        async function deleteProductAdmin(id) {
+            if (!confirm(`Are you sure you want to delete product with ID: ${id}?`)) {
+                return;
+            }
+            try {
+                console.log('Deleting product:', id);
+                const initialLength = ecommerceItems.length;
+                ecommerceItems = ecommerceItems.filter(item => item.id !== id);
+                if (ecommerceItems.length < initialLength) {
+                    showAdminMessage('success', `Product with ID ${id} deleted successfully! (Demo)`, 'products-management');
+                } else {
+                    showAdminMessage('error', `Product with ID ${id} not found for deletion.`, 'products-management');
+                }
+                fetchProductsAdmin();
+                renderProducts();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showAdminMessage('error', `Failed to delete product: ${error.message}`, 'products-management');
+            }
+        }
+
+        function resetProductForm() {
+            document.getElementById('product-form').reset();
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-form-title').textContent = 'Add New Product';
+            document.getElementById('product-form-submit-btn').textContent = 'Add Product';
+            document.getElementById('product-form-cancel-btn').classList.add('hidden');
+        }
+
+        // --- User Management CRUD Operations ---
+
+        async function fetchUsersAdmin() {
+            const usersTableBody = document.getElementById('users-table-body');
+            usersTableBody.innerHTML = '<tr><td colspan="3" class="text-center">Loading users...</td></tr>';
+            try {
+                const users = getUsers(); // Get users from localStorage (authSystemDB)
+
+                usersTableBody.innerHTML = '';
+                if (users.length === 0) {
+                    usersTableBody.innerHTML = '<tr><td colspan="3" class="text-center">No users found.</td></tr>';
+                    return;
+                }
+                users.forEach(user => {
+                    const row = usersTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${user.name || 'N/A'}</td>
+                        <td>${user.email}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-primary" onclick="editUserAdmin('${user.email}')">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteUserAdmin('${user.email}')">Delete</button>
+                        </td>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                usersTableBody.innerHTML = '<tr><td colspan="3" class="text-center text-red-500">Failed to load users.</td></tr>';
+                showAdminMessage('error', 'Failed to load users.', 'users-management');
+            }
+        }
+
+        document.getElementById('user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userEmailHidden = document.getElementById('user-email-hidden').value; // Original email for editing
+            const userName = document.getElementById('user-name').value;
+            const userEmail = document.getElementById('user-email').value;
+            const userPassword = document.getElementById('user-password').value;
+
+            let users = getUsers();
+            let message = '';
+            let success = false;
+
+            if (userEmailHidden) {
+                // UPDATE operation
+                const userIndex = users.findIndex(user => user.email === userEmailHidden);
+                if (userIndex !== -1) {
+                    // Check if new email already exists and is different from original
+                    if (userEmail !== userEmailHidden && users.some(user => user.email === userEmail)) {
+                        showAdminMessage('error', `User with email "${userEmail}" already exists.`, 'users-management');
+                        return;
+                    }
+                    users[userIndex].name = userName;
+                    users[userIndex].email = userEmail;
+                    if (userPassword) { // Only update password if provided
+                        users[userIndex].password = userPassword;
+                    }
+                    message = `User "${userName}" updated successfully! (Demo)`;
+                    success = true;
+                } else {
+                    message = `User with email "${userEmailHidden}" not found for update.`;
+                }
+            } else {
+                // CREATE operation
+                if (users.some(user => user.email === userEmail)) {
+                    showAdminMessage('error', `User with email "${userEmail}" already exists.`, 'users-management');
+                    return;
+                }
+                if (!userPassword) {
+                    showAdminMessage('error', 'Password is required for new users.', 'users-management');
+                    return;
+                }
+                users.push({ name: userName, email: userEmail, password: userPassword });
+                message = `User "${userName}" added successfully! (Demo)`;
+                success = true;
+            }
+
+            if (success) {
+                localStorage.setItem(DB_NAME, JSON.stringify({ users: users }));
+                showAdminMessage('success', message, 'users-management');
+                resetUserForm();
+                fetchUsersAdmin();
+            } else {
+                showAdminMessage('error', message, 'users-management');
+            }
+        });
+
+        function editUserAdmin(email) {
+            const userToEdit = getUsers().find(user => user.email === email);
+            if (userToEdit) {
+                document.getElementById('user-email-hidden').value = userToEdit.email;
+                document.getElementById('user-name').value = userToEdit.name;
+                document.getElementById('user-email').value = userToEdit.email;
+                document.getElementById('user-password').value = ''; // Clear password field for security
+
+                document.getElementById('user-form-title').textContent = `Edit User (Email: ${userToEdit.email})`;
+                document.getElementById('user-email').readOnly = false; // Ensure email field is editable for new user
+                document.getElementById('user-form-submit-btn').textContent = 'Update User';
+                document.getElementById('user-form-cancel-btn').classList.remove('hidden');
+            } else {
+                showAdminMessage('error', 'User not found for editing.', 'users-management');
+            }
+        }
+
+        async function deleteUserAdmin(email) {
+            if (!confirm(`Are you sure you want to delete user: ${email}?`)) {
+                return;
+            }
+            try {
+                let users = getUsers();
+                const initialLength = users.length;
+                users = users.filter(user => user.email !== email);
+                localStorage.setItem(DB_NAME, JSON.stringify({ users: users }));
+
+                if (users.length < initialLength) {
+                    showAdminMessage('success', `User ${email} deleted successfully! (Demo)`, 'users-management');
+                } else {
+                    showAdminMessage('error', `User ${email} not found for deletion.`, 'users-management');
+                }
+                fetchUsersAdmin();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showAdminMessage('error', `Failed to delete user: ${error.message}`, 'users-management');
+            }
+        }
+
+        function resetUserForm() {
+            document.getElementById('user-form').reset();
+            document.getElementById('user-email-hidden').value = '';
+            document.getElementById('user-form-title').textContent = 'Add New User';
+            document.getElementById('user-email').readOnly = false; // Ensure email field is editable for new user
+            document.getElementById('user-form-submit-btn').textContent = 'Add User';
+            document.getElementById('user-form-cancel-btn').classList.add('hidden');
+        }
+
+        // --- Initial Page Load Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('landing-page');
+        });
+    </script>
+</body>
+</html>
